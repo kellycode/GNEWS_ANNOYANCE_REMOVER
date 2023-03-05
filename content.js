@@ -127,6 +127,7 @@ let removeJunkSites = function () {
         "RTE.ie",
         "Sierra Sun",
         "Singularity Hub",
+        "Ski Area Management",
         "Smithsonian Magazine",
         "South Tahoe Now",
         "Tahoe Daily Tribune",
@@ -146,17 +147,26 @@ let removeJunkSites = function () {
             return;
         }
 
+        // collect the spans with the site name
         let spns = $(this).find("span.vr1PYe");
 
+        // loop, get the main article parent,
+        // remove the content and keep the name
         spns.each(function () {
             let name = $(this).text();
 
             if (!safeSiteList.includes(name)) {
                 console.log("Found junk site " + name);
                 let parent = $(this).closest("article");
-                let remover = parent.find("div.hLNLFf");
-                parent.html($(this).html());
-                //parent.append(remover);
+                parent.find("div.XlKvRb").remove();
+                parent.find("div.oovtQ").remove();
+                parent.find("h4.JtKRv").remove();
+                parent.find("figure.JtKRv").remove();
+                parent.find("figure.K0q4G").remove();
+                parent.find("div.UOVeFe").remove();
+
+                parent.append($(this).html());
+
                 parent.css({
                     backgroundColor: "black",
                     color: "#666",
