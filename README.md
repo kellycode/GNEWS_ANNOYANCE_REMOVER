@@ -1,6 +1,6 @@
 # GNEWS_ANNOYANCE_REMOVER
 
-Chrome extension
+Chrome extension and a work in progress
 
 Methods to remove garbage news using keywords (in a cookie) and working on a method to remove content and tracking from junk news sources.  It's really a webpack crap site with no worthwhile user interaction.  I've parred it down to keeping a list of safe sites and minimizing junk (for now).  I currently have over 2000 "Hide all stories from -" sites (had automated it) and still the junk keeps rolling in.
 
