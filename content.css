@@ -1,0 +1,140 @@
+.blockMark {
+    background-color: red;
+    display: none;
+}
+
+#meta {
+    width: 100%;
+}
+
+/* Denver post text style*/
+.body-copy p {
+    padding: 10px;
+    font-size: 18px;
+}
+
+/* Outlook */
+#app .BW6l9.EVCMF {
+    scrollbar-gutter: auto;
+}
+
+#managerBox {
+    color: white;
+    background-color: rgb(41, 42, 45);
+    border: 2px solid white;
+    border-radius: 6px;
+    position: fixed;
+    width: 17.5%;
+    min-width: 320px;
+    height: 700px;
+    min-height: 500px;
+    top: 130px;
+    left: 15px;
+    padding: 10px;
+    z-index: 10;
+    resize: both;
+    overflow: auto;
+}
+
+#draggerBox {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 60px;
+    left: 0px;
+    z-index: 11;
+    background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px, linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
+        linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px, linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+        linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    background-color: #131313;
+    background-size: 20px 20px;
+    cursor: grab;
+}
+
+#mbTextBox {
+    position: absolute;
+    inset: 20px 20px 60px;
+    color: white;
+    font-size: 16px;
+    font-weight: inherit;
+    line-height: 25px;
+    background-color: rgb(41, 42, 45);
+    resize: none;
+    z-index: 11;
+}
+
+#mbSubmitBtn {
+    background-color: rgb(0, 0, 0);
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    z-index: 11;
+}
+
+#mbSubmitBtn:hover {
+    background-color: rgb(0, 56, 0);
+}
+
+#dnBtn {
+    background-color: rgb(0, 0, 0);
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 50px;
+    height: 40px;
+    line-height: 40px;
+    z-index: 11;
+}
+
+#upBtn {
+    background-color: rgb(0, 0, 0);
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    left: 70px;
+    width: 50px;
+    height: 40px;
+    line-height: 40px;
+    z-index: 11;
+}
+
+#checkBtn {
+    background-color: rgb(0, 0, 0);
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    position: absolute;
+    bottom: 10px;
+    left: 130px;
+    width: 50px;
+    height: 40px;
+    line-height: 40px;
+    z-index: 11;
+}

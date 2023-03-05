@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "GNews Junk Kicker",
+    "short_name": "GNews Kick",
+    "description": "My garbage news blocker",
+    "version": "0.1",
+    "author": "KellyCode",
+    "icons": {
+        "48": "gn_junk_48.png",
+        "128": "gn_junk_128.png",
+        "256": "gn_junk_256.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://news.google.com/foryou*"],
+            "run_at": "document_idle",
+            "css": ["content.css"],
+            "js": ["jquery-3.5.1.min.js", "content.js"]
+        }
+    ],
+    "permissions": ["webNavigation", "scripting"]
+}
