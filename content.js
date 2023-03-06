@@ -1,4 +1,4 @@
-// content.js
+// content.jssetCookie
 
 // USEFUL THINGS
 let setCookie = function (key, value, expiry) {
@@ -97,11 +97,13 @@ let getItems = function () {
 let commitNewsItems = function () {
     let textAreaVal = $("#mbTextBox").val();
     let cleanString = removeExtraChars(textAreaVal);
-    setCookie("newsjunk", cleanString, 14);
+    setCookie("newsjunk", cleanString, 365);
     removeItems();
 };
 
 let removeJunkSites = function () {
+    // just used as a default, the
+    // values are stored in a cookie
     let safeSiteList = [
         "KTVN",
         "AirForceTimes.com",
@@ -130,16 +132,97 @@ let removeJunkSites = function () {
         "Ski Area Management",
         "Smithsonian Magazine",
         "South Tahoe Now",
+        "Stars and Stripes",
         "Tahoe Daily Tribune",
         "TechRepublic",
+        "UltraRunning Magazine",
         "Windows Central",
+        "WindowsReport.com",
     ];
 
     //console.log("removing garbage");
 
     // $("main c-wiz.D9SJMe c-wiz:contains(" + item + ")");
 
+    let getApprovedSiteCookie = function () {
+        // COOKIE HANDLERS
+        let approvedNewsCookie = getCookie("newsApproved");
+
+        // if no cookie
+        if (!approvedNewsCookie) {
+            console.log("no approvedNewsCookie");
+            // if no cookie, use the local array
+            approvedNewsCookie = safeSiteList.toString();
+            // and set it for next time
+            setCookie("newsApproved", approvedNewsCookie, 365);
+            // now that we have a cookie
+        }
+
+        return approvedNewsCookie;
+    };
+
+    let getApprovedSiteCookieAsArray = function () {
+        // COOKIE HANDLERS
+        let approvedNewsCookie = getCookie("newsApproved");
+
+        // if no cookie
+        if (!approvedNewsCookie) {
+            console.log("no approvedNewsCookie");
+            // if no cookie, use the local array
+            approvedNewsCookie = safeSiteList.toString();
+            // and set it for next time
+            setCookie("newsApproved", approvedNewsCookie, 365);
+            // now that we have a cookie
+        }
+
+        return approvedNewsCookie.split(",");
+    };
+
+    let addToSafelist = function (name) {
+        console.log("Adding " + name + " to safe list");
+
+        // get the approved site list as a cookie string
+        let approvedNewsCookie = getApprovedSiteCookie();
+
+        // now we're sure we have a cookie
+        // add the new site to it
+        approvedNewsCookie += "," + name;
+
+        // tidy up
+        let cleanString = removeExtraChars(approvedNewsCookie);
+
+        // set it
+        setCookie("newsApproved", cleanString, 365);
+
+        console.log("Site added to safe: " + cleanString);
+    };
+
+    let removeFromSafelist = function (name) {
+        let removeValue = function (list, value) {
+            return list.replace(new RegExp(",?" + value + ",?"), function (match) {
+                var first_comma = match.charAt(0) === ",",
+                    second_comma;
+
+                if (first_comma && (second_comma = match.charAt(match.length - 1) === ",")) {
+                    return ",";
+                }
+                return "";
+            });
+        };
+
+        // get the cookie
+        let approvedNewsCookie = getCookie("newsApproved");
+        // do the remove
+        approvedNewsCookie = removeValue(approvedNewsCookie, name);
+        // set the cookie
+        setCookie("newsApproved", approvedNewsCookie, 365);
+        // notify
+        console.log("Removal: " + name + " removed from safe list");
+    };
+
     let wizzers = $("main c-wiz.D9SJMe c-wiz");
+
+    console.log("WIZZERS: " + wizzers.length);
 
     wizzers.each(function (index) {
         // the first one is the "For you" box
@@ -150,12 +233,36 @@ let removeJunkSites = function () {
         // collect the spans with the site name
         let spns = $(this).find("span.vr1PYe");
 
+        // TODO add remove approved site button down here
+
         // loop, get the main article parent,
-        // remove the content and keep the name
+        // remove most of the content and keep the name
         spns.each(function () {
             let name = $(this).text();
 
-            if (!safeSiteList.includes(name)) {
+            let target = $(this).closest("article").find("time").parent();
+            target.css({ position: "relative" });
+
+            //let target = $(this).closest(".MCAGUe");
+
+            let nameSpan = $('<span class="nameSpanOut">(<span class="nameSpan">' + name + "</span>)</span>");
+
+            nameSpan.on("mousedown", function (e) {
+                let newsName = $(this).find(".nameSpan").text().trim();
+                removeFromSafelist(newsName);
+                e.stopPropagation;
+            });
+
+            if (!target.hasClass("marked")) {
+                target.append(nameSpan);
+                target.addClass("marked");
+            }
+
+            //.append('<span class="nameSpan">' + name + "</nspan>");
+
+            let safeSiteArray = getApprovedSiteCookieAsArray();
+
+            if (!safeSiteArray.includes(name)) {
                 console.log("Found junk site " + name);
                 let parent = $(this).closest("article");
                 parent.find("div.XlKvRb").remove();
@@ -165,13 +272,32 @@ let removeJunkSites = function () {
                 parent.find("figure.K0q4G").remove();
                 parent.find("div.UOVeFe").remove();
 
+                // add back the dropdown menu
                 parent.append($(this).html());
 
+                // add a keep button to put it in the safe site list
+                let keepBtn = $("<button id='keeperButton'>Add To SafeList</button>");
+                keepBtn.on("click", function (e) {
+                    addToSafelist(name);
+                });
+                parent.append(keepBtn);
+
+                // add a destroy button to remove it from the safe site list
+                /*
+                let destroyBtn = $("<button id='destroyButton'>Remove From SafeList</button>");
+                destroyBtn.on("click", function (e) {
+                    removeFromSafelist(name);
+                });
+                parent.append(destroyBtn);
+                */
+
+                // make it minimal
                 parent.css({
                     backgroundColor: "black",
                     color: "#666",
                     padding: "10px",
                     borderRadius: "6px",
+                    position: "relative",
                 });
             }
         });
@@ -211,7 +337,6 @@ let removeItems = function () {
         let txtArea = $("<textarea>", txtAreaData);
         txtArea.on("mousedown", function (e) {
             e.stopPropagation;
-            return false;
         });
         txtArea.append(gNewsWords.toString());
         newdiv.append(txtArea);

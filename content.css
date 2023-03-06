@@ -24,16 +24,67 @@
     border: 2px solid white;
     border-radius: 6px;
     position: fixed;
-    width: 17.5%;
-    min-width: 320px;
-    height: 700px;
-    min-height: 500px;
+    width: 280px;
+    min-width: 240px;
+    height: 500px;
+    min-height: 400px;
     top: 130px;
     left: 15px;
     padding: 10px;
     z-index: 10;
     resize: both;
     overflow: auto;
+}
+
+.nameSpanOut {
+    position: absolute;
+    top: 0px;
+    left: 100px;
+    padding: 0px 10px;
+    font-size: 12px;
+    z-index: 100;
+    cursor: pointer;
+    color: red;
+}
+
+.nameSpanOut:hover {
+    text-decoration: line-through;
+}
+
+.nameSpan {
+    color: white;
+}
+
+#keeperButton {
+    position: absolute;
+    width: 170px;
+    top: 0px;
+    left: 50%;
+    margin-left: -85px;
+    margin-top: 6px;
+    cursor: pointer;
+    background-color: gray;
+    border-radius: 6px;
+}
+
+#keeperButton:hover {
+    color: #cccccc;
+}
+
+#destroyButton {
+    position: absolute;
+    width: 170px;
+    bottom: 0px;
+    left: 50%;
+    margin-left: -85px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    background-color: gray;
+    border-radius: 6px;
+}
+
+#destroyButton:hover {
+    color: #cccccc;
 }
 
 #draggerBox {
@@ -65,7 +116,8 @@
 
 #mbSubmitBtn {
     background-color: rgb(0, 0, 0);
-    border: none;
+    border: 1px solid #666666;
+    border-radius: 4px;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -75,7 +127,7 @@
     position: absolute;
     bottom: 10px;
     right: 10px;
-    width: 100px;
+    width: 80px;
     height: 40px;
     line-height: 40px;
     z-index: 11;
@@ -87,7 +139,8 @@
 
 #dnBtn {
     background-color: rgb(0, 0, 0);
-    border: none;
+    border: 1px solid #666666;
+    border-radius: 4px;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -97,7 +150,7 @@
     position: absolute;
     bottom: 10px;
     left: 10px;
-    width: 50px;
+    width: 40px;
     height: 40px;
     line-height: 40px;
     z-index: 11;
@@ -105,7 +158,8 @@
 
 #upBtn {
     background-color: rgb(0, 0, 0);
-    border: none;
+    border: 1px solid #666666;
+    border-radius: 4px;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -114,8 +168,8 @@
     cursor: pointer;
     position: absolute;
     bottom: 10px;
-    left: 70px;
-    width: 50px;
+    left: 60px;
+    width: 40px;
     height: 40px;
     line-height: 40px;
     z-index: 11;
@@ -123,7 +177,8 @@
 
 #checkBtn {
     background-color: rgb(0, 0, 0);
-    border: none;
+    border: 1px solid #666666;
+    border-radius: 4px;
     color: white;
     text-align: center;
     text-decoration: none;
@@ -132,8 +187,8 @@
     cursor: pointer;
     position: absolute;
     bottom: 10px;
-    left: 130px;
-    width: 50px;
+    left: 110px;
+    width: 40px;
     height: 40px;
     line-height: 40px;
     z-index: 11;
