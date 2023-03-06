@@ -276,7 +276,7 @@ let removeJunkSites = function () {
                 parent.append($(this).html());
 
                 // add a keep button to put it in the safe site list
-                let keepBtn = $("<button id='keeperButton'>Add To SafeList</button>");
+                let keepBtn = $("<button id='keeperButton'>Add To Safe List</button>");
                 keepBtn.on("click", function (e) {
                     addToSafelist(name);
                 });
