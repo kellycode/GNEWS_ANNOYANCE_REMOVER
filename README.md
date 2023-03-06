@@ -2,8 +2,9 @@
 
 Chrome extension and a work in progress
 
-Methods to remove garbage news using keywords (in a cookie) and a method to minimalize and junk news sources (also removes tracking - every hover is tracked).  It's really a webpack crap site with no worthwhile user interaction.  I've parred it down to keeping a list of safe sites and minimizing junk (for now).  I currently have over 2000 "Hide all stories from -" sites (had automated it) and still the junk keeps rolling in.
+Auto-remove onload articles with a list of keywords saved in a cookie and temporary list updated in a draggable/resizeable textbox, and  
+keep articles from sources listed in an approved, cookie saved list - so if you start gnews, nothing's approved but you can "Add To Safe List" button.
 
-My 2 bits: News sources are desperate and have become little more than ridiculous, overpriced click bait.  Even if you subscribe they still make every effort to "afflict the comfortable and comfort the afflicted" to keep you paying.  I think AI (automated web scraping) will eventually provide summarized articles manipulated enough to seem original and give you the option to pay a few cents per extended read.
+TODO: Temp keywords are cookied but still need a method to add permanent keyword storage.
 
 Made this for my own use, I don't publish extension so feel free to do what you like with it
