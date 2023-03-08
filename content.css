@@ -102,9 +102,22 @@
     cursor: grab;
 }
 
+#mbTextBoxTabs {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    left: 20px;
+    height: 40px;
+    background-color: gray;
+    z-index: 11;
+}
+
 #mbTextBox {
     position: absolute;
-    inset: 20px 20px 60px;
+    top: 20px;
+    right: 20px;
+    bottom: 80px;
+    left: 20px;
     color: white;
     font-size: 16px;
     font-weight: inherit;
@@ -112,6 +125,7 @@
     background-color: rgb(41, 42, 45);
     resize: none;
     z-index: 11;
+    cursor: auto;
 }
 
 #mbSubmitBtn {

@@ -97,6 +97,7 @@ let getItems = function () {
 let commitNewsItems = function () {
     let textAreaVal = $("#mbTextBox").val();
     let cleanString = removeExtraChars(textAreaVal);
+    console.log(cleanString);
     setCookie("newsjunk", cleanString, 365);
     removeItems();
 };
@@ -245,7 +246,7 @@ let removeJunkSites = function () {
 
             //let target = $(this).closest(".MCAGUe");
 
-            let nameSpan = $('<span class="nameSpanOut">(<span class="nameSpan">' + name + "</span>)</span>");
+            let nameSpan = $('<span class="nameSpanOut" title="Remove from approved sites">(<span class="nameSpan">' + name + "</span>)</span>");
 
             nameSpan.on("mousedown", function (e) {
                 let newsName = $(this).find(".nameSpan").text().trim();
@@ -276,7 +277,7 @@ let removeJunkSites = function () {
                 parent.append($(this).html());
 
                 // add a keep button to put it in the safe site list
-                let keepBtn = $("<button id='keeperButton'>Add To Safe List</button>");
+                let keepBtn = $("<button id='keeperButton'>Add To SafeList</button>");
                 keepBtn.on("click", function (e) {
                     addToSafelist(name);
                 });
@@ -338,8 +339,11 @@ let removeItems = function () {
         txtArea.on("mousedown", function (e) {
             e.stopPropagation;
         });
-        txtArea.append(gNewsWords.toString());
+        txtArea.append(gNewsWords.toString().split(",").join(",\n"));
         newdiv.append(txtArea);
+
+        //let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
+        //newdiv.append(textBoxTabs);
 
         let btnData = {
             id: "mbSubmitBtn",
