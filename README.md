@@ -1,5 +1,7 @@
 # GNEWS_ANNOYANCE_REMOVER
 
+![google news annoynace remover](https://kellycode.github.io/GNEWS_ANNOYANCE_REMOVER/preview.jpg)
+
 Chrome extension and a work in progress
 
 Auto-remove onload articles with a list of keywords saved in a cookie and temporary list updated in a draggable/resizeable textbox, and  
