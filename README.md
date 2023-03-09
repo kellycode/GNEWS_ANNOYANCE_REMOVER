@@ -1,6 +1,6 @@
 # GNEWS_ANNOYANCE_REMOVER
 
-![google news annoynace remover](https://kellycode.github.io/GNEWS_ANNOYANCE_REMOVER/preview.jpg)
+![google news annoynace remover](https://github.com/kellycode/GNEWS_ANNOYANCE_REMOVER/raw/main/preview.jpg)
 
 Chrome extension and a work in progress
 
