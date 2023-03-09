@@ -107,14 +107,39 @@
     top: 20px;
     right: 20px;
     left: 20px;
-    height: 40px;
-    background-color: gray;
+    height: 24px;
+    background-color: transparent;
     z-index: 11;
+}
+
+.mbTab {
+    width: 50%;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    display: inline-block;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+    background-color: rgb(41, 42, 45);
+    color: #aaaaaa;
+    cursor: pointer;
+    border-top: 2px solid rgb(118, 118, 118);
+    border-right: 2px solid rgb(118, 118, 118);
+    border-left: 2px solid rgb(118, 118, 118);
+    box-sizing: border-box;
+}
+
+.mbTab.active {
+    color: white;
+}
+
+.mbTab:hover {
+    background-color: rgb(68, 69, 73);
 }
 
 #mbTextBox {
     position: absolute;
-    top: 20px;
+    top: 45px;
     right: 20px;
     bottom: 80px;
     left: 20px;
@@ -122,6 +147,7 @@
     font-size: 16px;
     font-weight: inherit;
     line-height: 25px;
+    border-color: rgb(118, 118, 118);
     background-color: rgb(41, 42, 45);
     resize: none;
     z-index: 11;

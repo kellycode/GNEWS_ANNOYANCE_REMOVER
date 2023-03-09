@@ -98,7 +98,11 @@ let commitNewsItems = function () {
     let textAreaVal = $("#mbTextBox").val();
     let cleanString = removeExtraChars(textAreaVal);
     console.log(cleanString);
-    setCookie("newsjunk", cleanString, 365);
+    // get which cookie we're saving to
+    let cookieName = $(".mbTab.active").attr("data-cookie");
+    // set it
+    setCookie(cookieName, cleanString, 365);
+    // updated so do a sweep
     removeItems();
 };
 
@@ -283,15 +287,6 @@ let removeJunkSites = function () {
                 });
                 parent.append(keepBtn);
 
-                // add a destroy button to remove it from the safe site list
-                /*
-                let destroyBtn = $("<button id='destroyButton'>Remove From SafeList</button>");
-                destroyBtn.on("click", function (e) {
-                    removeFromSafelist(name);
-                });
-                parent.append(destroyBtn);
-                */
-
                 // make it minimal
                 parent.css({
                     backgroundColor: "black",
@@ -303,6 +298,34 @@ let removeJunkSites = function () {
             }
         });
     });
+};
+
+let switchFocused = function (textarea, cookieName) {
+    console.log(textarea);
+    setActiveTextVal(textarea, cookieName);
+};
+
+let setActiveTextVal = function (textarea, cookieName) {
+    let cookieText = "";
+
+    let tempTab = $("#mbTempTab");
+    let permTab = $("#mbPermTab");
+
+    if (cookieName === "tempNewsJunk") {
+        cookieText = getCookie("tempNewsJunk");
+        tempTab.addClass("active");
+        permTab.removeClass("active");
+    } else {
+        cookieText = getCookie("permNewsJunk");
+        tempTab.removeClass("active");
+        permTab.addClass("active");
+    }
+
+    if (cookieText) {
+        textarea.val(cookieText.split(",").join(",\n"));
+    } else {
+        console.log("No response for " + cookieName);
+    }
 };
 
 // direct remove
@@ -321,17 +344,18 @@ let removeItems = function () {
         };
         let newdiv = $("<div>", mBoxData);
 
-        let blkBxData = {
+        // Background div for drag
+        let dragBoxData = {
             id: "draggerBox",
         };
-        let blkBx = $("<div>", blkBxData);
-        blkBx.on("mousedown", function (e) {
+        let dragBox = $("<div>", dragBoxData);
+        dragBox.on("mousedown", function (e) {
             e.stopPropagation;
             return false;
         });
-        newdiv.append(blkBx);
+        newdiv.append(dragBox);
 
-        // EDITOR TEXT AREA
+        // Text area
         let txtAreaData = {
             id: "mbTextBox",
         };
@@ -339,11 +363,22 @@ let removeItems = function () {
         txtArea.on("mousedown", function (e) {
             e.stopPropagation;
         });
-        txtArea.append(gNewsWords.toString().split(",").join(",\n"));
+        setActiveTextVal(txtArea, "tempNewsJunk");
         newdiv.append(txtArea);
 
-        //let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
-        //newdiv.append(textBoxTabs);
+        // Temp/Perm list tabs
+        let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
+        let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Temp</div>');
+        tempTab.click(function () {
+            switchFocused(txtArea, "tempNewsJunk");
+        });
+        textBoxTabs.append(tempTab);
+        let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Perm</div>');
+        permTab.click(function () {
+            switchFocused(txtArea, "permNewsJunk");
+        });
+        textBoxTabs.append(permTab);
+        newdiv.append(textBoxTabs);
 
         let btnData = {
             id: "mbSubmitBtn",
@@ -389,15 +424,15 @@ let removeItems = function () {
     if (window.location.hostname === "news.google.com") {
         // COOKIE HANDLERS
         // get the junk phrase list
-        let newsJunk = getCookie("newsjunk");
+        let newsJunk = getCookie("tempNewsJunk");
         // if no cookie
         if (!newsJunk) {
-            console.log("no newsjunk cookie");
+            console.log("no tempNewsJunk cookie");
             // if no cookie, use the local array
             newsJunk = gNewsWords;
             // and set it for next time
             let njString = newsJunk.toString();
-            setCookie("newsjunk", njString, 14);
+            setCookie("tempNewsJunk", njString, 14);
 
             // if we have a cookie
         } else {
