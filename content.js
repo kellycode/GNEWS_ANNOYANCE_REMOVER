@@ -1,5 +1,10 @@
 // content.jssetCookie
 
+let tempNewsJunk = "";
+let permNewsJunk = "";
+
+let emptyCWizCount = 0;
+
 // USEFUL THINGS
 let setCookie = function (key, value, expiry) {
     var expires = new Date();
@@ -23,8 +28,32 @@ let removeExtraChars = function (str) {
     return str;
 };
 
+let appendWatchItem = function(itemText) {
+    let textArea = $("#mbTextBox");
+    let textAreaVal = textArea.val();
+
+    console.log("Adding watched item " + itemText);
+
+    let newTextAreaVal = textAreaVal + (",\n" + itemText);
+    textArea.val(newTextAreaVal)
+}
+
+// Using the added X block, adds item to list of junk news
+let clickAddToJunk = function (event) {
+
+    // data is just the item number in the ul (zero based)
+    let lookedForText = event.data.lookForText;
+
+    // get the element clicked
+    let target = $(event.target);
+
+    appendWatchItem(lookedForText);
+
+};
+
+
 // Draggable https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_draggable
-//Make the DIV element draggagle:
+// Make the textarea div element draggagle
 
 function dragElement() {
     let elmnt = document.getElementById("managerBox");
@@ -73,27 +102,52 @@ function dragElement() {
     }
 }
 
+// not used here, was for removing ads
 let getItems = function () {
     let block_string =
         ".ad-unit, .ezoic-ad, .stickyAd, #topAd, [id^='sltrib-promo'], " +
         ".video-ad-container, .art-sld-ad, " +
         ".js_sticky-top-ad, .ad_xrail, div[data-freestar-ad], [id^='google_ads'], .ads-336x280" +
         "";
-
     let blocks = $(block_string);
-
     let current = window.location.hostname;
-
+    console.log("getItems blocks length " + blocks.length);
     blocks.each(function (index, el) {
         if (!$(this).hasClass("blockMark")) {
             $(this).addClass("blockMark");
         }
 
-        console.log("removing " + this);
-        console.log("Removed from " + current);
+        console.log("getItems removed " + this);
+        console.log("getItems Removed from " + current);
     });
 };
 
+// adds a X box to add news sources to junk list
+let markSourceItems = function () {
+    let blocks = $(".hLNLFf button").parent().parent();
+
+    blocks.each(function (index, el) {
+        let mbc = $('<div class="myBtnsContainer"></div>');
+
+        let hasf = $('<div class="killAllStoriesFrom" title="Mark this provider as junk news">X</div>');
+
+        mbc.append(hasf);
+
+        // add a custome class
+        if ($(this).find(".killAllStoriesFrom").length === 0) {
+            $(this).append(mbc);
+            $(this).addClass("quickMarked");
+        }
+
+        let sText = $(this).parent().parent().parent().parent().find(".vr1PYe").text();
+        //console.log(sText);
+
+        // add the event listeners
+        hasf.on("click", { lookForText: sText }, clickAddToJunk);
+    });
+}
+
+// commit list to a cookie and localStorage
 let commitNewsItems = function () {
     let textAreaVal = $("#mbTextBox").val();
     let cleanString = removeExtraChars(textAreaVal);
@@ -102,6 +156,8 @@ let commitNewsItems = function () {
     let cookieName = $(".mbTab.active").attr("data-cookie");
     // set it
     setCookie(cookieName, cleanString, 365);
+    // set the item in localStorage
+    localStorage.setItem(cookieName, cleanString);
     // updated so do a sweep
     removeItems();
 };
@@ -152,6 +208,11 @@ let removeJunkSites = function () {
     let getApprovedSiteCookie = function () {
         // COOKIE HANDLERS
         let approvedNewsCookie = getCookie("newsApproved");
+
+        /*
+        newsApproved defaults
+        KTVN,AirForceTimes.com,Ars Technica,BBC,BleepingComputer,Colorado Newsline,Colorado Public Radio,Connaught Telegraph,Department of Defense,Ghacks,Irish Examiner,Jefferson Public Radio,Department of Justice,KELOLAND.com,Kotaku,Military Times,MPR News,KRNV,NPR,Phys.org,The Record-Courier,RTE.ie,Sierra Sun,Singularity Hub,Ski Area Management,Smithsonian Magazine,South Tahoe Now,Stars and Stripes,Tahoe Daily Tribune,TechRepublic,UltraRunning Magazine,Windows Central,WindowsReport.com,Defense News,TechTalks,Cornell University The Cornell Daily Sun,Nevada Appeal,TechCentral,GOV.UK,CDC,Pipestone County Star,Santa Cruz Sentinel,BBC News,KELOLAND News,Associated Press,Associated Press,KELO,GAA.ie,GAA.ie,Nation.Cymru,Federal Communications Commission,Cork GAA,Sioux County Radio,USGS Earthquake Hazards Program,NVIDIA GeForce,PC Guide - For The Latest PC Hardware & Tech News,Daily Record-News,Sierra Sun Times,UPS,Tech Times,Tech Times
+        */
 
         // if no cookie
         if (!approvedNewsCookie) {
@@ -236,7 +297,7 @@ let removeJunkSites = function () {
         }
 
         // collect the spans with the site name
-        let spns = $(this).find("span.vr1PYe");
+        let spns = $(this).find("div.vr1PYe");
 
         // TODO add remove approved site button down here
 
@@ -301,7 +362,6 @@ let removeJunkSites = function () {
 };
 
 let switchFocused = function (textarea, cookieName) {
-    console.log(textarea);
     setActiveTextVal(textarea, cookieName);
 };
 
@@ -322,104 +382,121 @@ let setActiveTextVal = function (textarea, cookieName) {
     }
 
     if (cookieText) {
-        textarea.val(cookieText.split(",").join(",\n"));
+        let sortedCookieText = cookieText.split(",").sort().join(",\n");
+        textarea.val(sortedCookieText);
     } else {
         console.log("No response for " + cookieName);
     }
+};
+
+let appendManageBox = function () {
+    let home = $("main");
+    let height = $("body").height() - $("header").height();
+
+    // EDITOR DIV
+    let mBoxData = {
+        id: "managerBox",
+    };
+    let newdiv = $("<div>", mBoxData);
+
+    // Background div for drag
+    let dragBoxData = {
+        id: "draggerBox",
+    };
+    let dragBox = $("<div>", dragBoxData);
+    dragBox.on("mousedown", function (e) {
+        e.stopPropagation;
+        return false;
+    });
+    newdiv.append(dragBox);
+
+    // Text area
+    let txtAreaData = {
+        id: "mbTextBox",
+    };
+    let txtArea = $("<textarea>", txtAreaData);
+    txtArea.on("mousedown", function (e) {
+        e.stopPropagation;
+    });
+    setActiveTextVal(txtArea, "tempNewsJunk");
+    newdiv.append(txtArea);
+
+    // Temp/Perm list tabs
+    let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
+    let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Temp</div>');
+    tempTab.click(function () {
+        switchFocused(txtArea, "tempNewsJunk");
+    });
+    textBoxTabs.append(tempTab);
+    let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Perm</div>');
+    permTab.click(function () {
+        switchFocused(txtArea, "permNewsJunk");
+    });
+    textBoxTabs.append(permTab);
+    newdiv.append(textBoxTabs);
+
+    let btnData = {
+        id: "mbSubmitBtn",
+    };
+    let mbSubmit = $("<button>", btnData);
+    mbSubmit.text("Submit");
+    mbSubmit.click(commitNewsItems);
+    newdiv.append(mbSubmit);
+
+    let dnBtnData = {
+        id: "dnBtn",
+    };
+    let dnBtnDiv = $("<div>", dnBtnData);
+    dnBtnDiv.html("&#8650;");
+    dnBtnDiv.click(function () {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+    newdiv.append(dnBtnDiv);
+
+    let upBtnData = {
+        id: "upBtn",
+    };
+    let upBtnDiv = $("<div>", upBtnData);
+    upBtnDiv.html("&#8648;");
+    upBtnDiv.click(function () {
+        window.scrollTo(0, 0);
+    });
+    newdiv.append(upBtnDiv);
+
+    let checkBtnData = {
+        id: "checkBtn",
+        title: "Edit specific news sources to safe list"
+    };
+    let checkBtnDiv = $("<div>", checkBtnData);
+    checkBtnDiv.html("&#9986;");
+    checkBtnDiv.click(removeJunkSites);
+    newdiv.append(checkBtnDiv);
+
+    $("body").append(newdiv);
+
+    dragElement();
 };
 
 // direct remove
 let removeItems = function () {
     // START GOOGLE NEWS
     // Default textbox words
-    let gNewsWords = ["Twitch Star", "Ask Amy", "Prince Harry"];
+    /*
+    $2500,(Opinion),49ers,Adjutant,Aegor,Ammon,Amouranth,Arsenal,Ask Amy,Ask Joe,BTC,Barbenheimer,Beast,Barbie,Beyonc,Billy Strings,Boredom B,Capaldi,Champions League,Chase Int,Chauvin,Chelsea,Coldplay,Cormac,Crypto,Cyberpunk,Dai Y,Diagnosing d,Doctor Who,Europa League,FaZe,Flag Officer,Foo Fighters,French Open,Funko,Gay Men,High-risk,Hockey,Hubble,India court,Jalen,James Webb,Klimt,Lakers,Leong,LiFi,Lofi,Man City,Manchester City,Manchester United,Mario Bro,Marvel TV,Midjourney,Mosque call,MrBeast,NBA,NFL,Napoleon,Netball,Nigeria,Pokémon,Premier League,Prince Harry,QAnon,Queen Charlotte,Real Madrid,Roberts-Smith,SBF,Sameera,Shiv,Simpsons,Small Dog W,Spider-Verse,Stanley Cup,Succession,Super Mario,Taylor Swift,The Witcher,Trigun,Twitch,Twitch Star,Twitter,Vtuber,Webb,Webb S,West Ham,What I Eat,Wilhelm,Wimbledon,Wrestling,Wrexham,XFL,YouTube star,YouTuber,donut hole,double-decker,end of history,iPhone,juice jack,luxury picnic,mosque,older father,screen-based,student loan
+    */
+    let defaultTempNewsJunk = ["Twitch Star", "Ask Amy", "Prince Harry"];
 
-    let appendManageBox = function () {
-        let home = $("main");
-        let height = $("body").height() - $("header").height();
+    let newsRemAside = $("body").children("aside");
+    newsRemAside.remove();
 
-        // EDITOR DIV
-        let mBoxData = {
-            id: "managerBox",
-        };
-        let newdiv = $("<div>", mBoxData);
+    let sourcesJunk = $("h2:contains('Sources')");
+    sourcesJunk.css({ color: "red" });
+    sourcesJunk.parent().parent().parent().css({ display: "none" });
 
-        // Background div for drag
-        let dragBoxData = {
-            id: "draggerBox",
-        };
-        let dragBox = $("<div>", dragBoxData);
-        dragBox.on("mousedown", function (e) {
-            e.stopPropagation;
-            return false;
-        });
-        newdiv.append(dragBox);
-
-        // Text area
-        let txtAreaData = {
-            id: "mbTextBox",
-        };
-        let txtArea = $("<textarea>", txtAreaData);
-        txtArea.on("mousedown", function (e) {
-            e.stopPropagation;
-        });
-        setActiveTextVal(txtArea, "tempNewsJunk");
-        newdiv.append(txtArea);
-
-        // Temp/Perm list tabs
-        let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
-        let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Temp</div>');
-        tempTab.click(function () {
-            switchFocused(txtArea, "tempNewsJunk");
-        });
-        textBoxTabs.append(tempTab);
-        let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Perm</div>');
-        permTab.click(function () {
-            switchFocused(txtArea, "permNewsJunk");
-        });
-        textBoxTabs.append(permTab);
-        newdiv.append(textBoxTabs);
-
-        let btnData = {
-            id: "mbSubmitBtn",
-        };
-        let mbSubmit = $("<button>", btnData);
-        mbSubmit.text("Submit");
-        mbSubmit.click(commitNewsItems);
-        newdiv.append(mbSubmit);
-
-        let dnBtnData = {
-            id: "dnBtn",
-        };
-        let dnBtnDiv = $("<div>", dnBtnData);
-        dnBtnDiv.html("&#8650;");
-        dnBtnDiv.click(function () {
-            window.scrollTo(0, document.body.scrollHeight);
-        });
-        newdiv.append(dnBtnDiv);
-
-        let upBtnData = {
-            id: "upBtn",
-        };
-        let upBtnDiv = $("<div>", upBtnData);
-        upBtnDiv.html("&#8648;");
-        upBtnDiv.click(function () {
-            window.scrollTo(0, 0);
-        });
-        newdiv.append(upBtnDiv);
-
-        let checkBtnData = {
-            id: "checkBtn",
-        };
-        let checkBtnDiv = $("<div>", checkBtnData);
-        checkBtnDiv.html("&#9986;");
-        checkBtnDiv.click(removeJunkSites);
-        newdiv.append(checkBtnDiv);
-
-        $("body").append(newdiv);
-
-        dragElement();
-    };
+    let tempNewsCookie = getCookie("newsJunk");
+    if (tempNewsCookie) {
+        defaultTempNewsJunk = tempNewsCookie.split(",").sort();
+    }
 
     if (window.location.hostname === "news.google.com") {
         // COOKIE HANDLERS
@@ -427,9 +504,14 @@ let removeItems = function () {
         let newsJunk = getCookie("tempNewsJunk");
         // if no cookie
         if (!newsJunk) {
-            console.log("no tempNewsJunk cookie");
+            console.log("no tempNewsJunk cookie, looking for local storage");
+             // if no cookie, use the localStorage
+            newsJunk = localStorage.getItem('tempNewsJunk');
             // if no cookie, use the local array
-            newsJunk = gNewsWords;
+            console.log("no localSorage data, setting string default");
+            if (!newsJunk) {
+                newsJunk = defaultTempNewsJunk;
+            }
             // and set it for next time
             let njString = newsJunk.toString();
             setCookie("tempNewsJunk", njString, 14);
@@ -437,8 +519,8 @@ let removeItems = function () {
             // if we have a cookie
         } else {
             // string to array for convenience
-            gNewsWords = newsJunk.split(",");
-            //console.log(gNewsWords);
+            defaultTempNewsJunk = newsJunk.split(",").sort();
+            //console.log(defaultTempNewsJunk);
         }
 
         if (window.location.href.indexOf("foryou") !== -1) {
@@ -454,125 +536,40 @@ let removeItems = function () {
         // c-wiz custom tag is used in place of divgarbage
         // need to keep and eye on the afJ4ge class as it's webpack crap
         let remover = function (item) {
-            let junk = $("main c-wiz.D9SJMe c-wiz:contains(" + item + ")");
+            let junk = $("main c-wiz.D9SJMe c-wiz article:contains(" + item + ")");
+
             if (junk.length > 0) {
                 console.log(junk.length + " : " + item + "'s removed");
                 junk.remove();
             }
+
+            // check for empty c-wiz blocks
+            $( "main c-wiz.D9SJMe c-wiz" ).each(function( index ) {
+                let articles = $(this).find('article');
+                if(articles.length === 0) {
+                    console.log("removing empty c-wiz block " + emptyCWizCount++);
+                    $(this).remove();
+                }
+              });
+
         };
 
         // Default never want to see
-        let defaultJunk = [
-            "2023 USA",
-            "Allianz",
-            "Amy",
-            "Athletics",
-            "Avalanche",
-            "Basketball",
-            "Beyoncé",
-            "Beyonce",
-            "Black farmers",
-            "Boredom B",
-            "Brighton",
-            "Hobe Albion",
-            "Banksy",
-            "Baseball",
-            "Blockchain",
-            "Broncos",
-            "ChatGPT",
-            "City-Builder",
-            "Clippers",
-            "Crypto Bro",
-            "Crypto",
-            "Curiosity rover",
-            "Cyberstalking",
-            "David Carrick",
-            "Europa League",
-            "Eurovis",
-            "exoplanet",
-            "Football",
-            "football",
-            "Fortnite",
-            "genomes",
-            "Gothataone",
-            "Grammy",
-            "Harry and Meghan",
-            "Hockey",
-            //"Hogwarts",
-            "hockey",
-            "Juneteenth",
-            "Last Of Us",
-            "Last of Us",
-            "Leeds",
-            "LGBTQ",
-            "Lizzo",
-            "Loppet",
-            "long CO",
-            "Magic Mike",
-            "Man City",
-            "Man Utd",
-            "Minecraft",
-            "NBA",
-            "Newcastle United",
-            "Netflix",
-            "Nicaragua",
-            "Nigeria",
-            "Nigerian",
-            "Nikki Haley",
-            "Nintendo",
-            "NFL",
-            "NHL",
-            "Not My",
-            "Nuggets",
-            "Odenkirk",
-            "Opinion",
-            "Overwatch",
-            "Packers",
-            "Phillies",
-            "Pokémon",
-            "Podcast",
-            "Prince Harry",
-            "Premier League",
-            "PS5",
-            "Rams",
-            "Rugby",
-            "rugby",
-            "reddit",
-            "Reddit",
-            "Rihanna",
-            "Rockies",
-            "Scoreboard",
-            "SDSU",
-            "Shania",
-            "Six Nations",
-            "Squid G",
-            "Streamer",
-            "Summit League",
-            "Super Bowl",
-            "TikTok",
-            "trans athletes",
-            "Trump",
-            "Twitch",
-            "Twitter",
-            "Vaginas",
-            "WCSO",
-            "West Ham",
-            "Chelsea",
-            "wrestlers",
-            "wrestling",
-            "Xbox",
-            "YouTuber",
-            "Zelda",
-        ];
+        let defaultPermNewsJunk = ["2023 USA", "Allianz", "Zelda"];
+        defaultTempNewsJunk.sort();
 
-        //console.log(defaultJunk.sort());
+        //console.log(defaultPermNewsJunk.sort());
+        let permNewsCookie = getCookie("permNewsJunk");
+        if (permNewsCookie) {
+            defaultPermNewsJunk = permNewsCookie.split(",").sort();
+        }
 
         // Leave the main page with default blah
         if (window.location.href.indexOf("foryou") !== -1) {
-            defaultJunk.forEach(remover);
+            defaultPermNewsJunk.forEach(remover);
         }
 
-        gNewsWords.forEach(remover);
+        defaultTempNewsJunk.forEach(remover);
     }
 
     // END GOOGLE NEWS
@@ -580,20 +577,20 @@ let removeItems = function () {
 
 // START IT UP
 
-getItems();
+markSourceItems();
 removeItems();
 
 let intTime = 5000;
 
 // whatever
 setInterval(function () {
-    getItems();
+    markSourceItems();
     removeItems();
 }, intTime);
 
 let timer = null;
 
-// and then call getItems when page is scrolled
+// and then call markSourceItems when page is scrolled
 window.addEventListener(
     "scroll",
     function () {
@@ -601,7 +598,7 @@ window.addEventListener(
             clearTimeout(timer);
         }
         timer = setTimeout(function () {
-            getItems();
+            markSourceItems();
             removeItems();
         }, 500);
     },

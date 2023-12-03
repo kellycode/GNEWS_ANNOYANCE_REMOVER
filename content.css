@@ -233,3 +233,40 @@
     line-height: 40px;
     z-index: 11;
 }
+
+
+/* News source buttons*/
+.myBtnsContainer {
+    width: auto;
+    height: 20px;
+    position: absolute;
+    top: 4px;
+    right: 20px;
+    text-align: center;
+}
+
+.killAllStoriesFrom {
+    color: white;
+    margin: 0px 1px 0px 1px;
+    background-color: black;
+    font-weight: bold;
+    font-size: 8px;
+    border: 1px solid white;
+    border-radius: 6px;
+    text-align: center;
+    width: 20px;
+    height: 100%;
+    line-height: 20px;
+    box-sizing: border-box;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.quickMarked {
+    position: relative;
+    width: 120px;
+}
+
+#meta {
+    width: 100%;
+}
