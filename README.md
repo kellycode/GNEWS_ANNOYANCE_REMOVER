@@ -8,4 +8,6 @@ This is brute force remove google news garbage.  Cookie and local storage stored
 
 Chrome extension and a work in progress
 
+Note: "Perm" tab is for a planned feature add and not used atm
+
 Made this for my own use, I don't publish extension so feel free to do what you like with it
