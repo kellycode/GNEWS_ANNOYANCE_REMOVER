@@ -2,7 +2,7 @@
 
 ![google news annoynace remover](https://github.com/kellycode/GNEWS_ANNOYANCE_REMOVER/raw/main/preview.jpg)
 
-Google seems to have an agreement with news providers that lets them show news as long as they show snews from everywhere regardless of user prefs.
+Google seems to have an agreement with news providers that lets them show news as long as they show news from everywhere regardless of user prefs.
 
 This is brute force remove google news garbage.  Cookie and local storage stored keyword article remover by subject and source.
 
