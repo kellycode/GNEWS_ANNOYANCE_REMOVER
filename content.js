@@ -47,14 +47,17 @@ let clickAddToJunk = function (event) {
     // get the element clicked
     let target = $(event.target);
 
+    // append the news source to block to the list
     appendWatchItem(lookedForText);
+
+    // it's now added to the list so we can do
+    // same as clicking the "Submit" button
+    commitNewsItems();
 
 };
 
 
-// Draggable https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_draggable
 // Make the textarea div element draggagle
-
 function dragElement() {
     let elmnt = document.getElementById("managerBox");
 
@@ -102,26 +105,6 @@ function dragElement() {
     }
 }
 
-// not used here, was for removing ads
-let getItems = function () {
-    let block_string =
-        ".ad-unit, .ezoic-ad, .stickyAd, #topAd, [id^='sltrib-promo'], " +
-        ".video-ad-container, .art-sld-ad, " +
-        ".js_sticky-top-ad, .ad_xrail, div[data-freestar-ad], [id^='google_ads'], .ads-336x280" +
-        "";
-    let blocks = $(block_string);
-    let current = window.location.hostname;
-    console.log("getItems blocks length " + blocks.length);
-    blocks.each(function (index, el) {
-        if (!$(this).hasClass("blockMark")) {
-            $(this).addClass("blockMark");
-        }
-
-        console.log("getItems removed " + this);
-        console.log("getItems Removed from " + current);
-    });
-};
-
 // adds a X box to add news sources to junk list
 let markSourceItems = function () {
     let blocks = $(".hLNLFf button").parent().parent();
@@ -147,18 +130,18 @@ let markSourceItems = function () {
     });
 }
 
-// commit list to a cookie and localStorage
+// commit list to a cookie and localStorage and then remove them
 let commitNewsItems = function () {
     let textAreaVal = $("#mbTextBox").val();
     let cleanString = removeExtraChars(textAreaVal);
-    console.log(cleanString);
+    console.log("JUNK NEWS ITEMS: " + cleanString);
     // get which cookie we're saving to
     let cookieName = $(".mbTab.active").attr("data-cookie");
     // set it
     setCookie(cookieName, cleanString, 365);
     // set the item in localStorage
     localStorage.setItem(cookieName, cleanString);
-    // updated so do a sweep
+    // do a sweep
     removeItems();
 };
 
@@ -244,7 +227,7 @@ let removeJunkSites = function () {
         return approvedNewsCookie.split(",");
     };
 
-    let addToSafelist = function (name) {
+    let addToApprovedNewsSourceList = function (name) {
         console.log("Adding " + name + " to safe list");
 
         // get the approved site list as a cookie string
@@ -263,7 +246,7 @@ let removeJunkSites = function () {
         console.log("Site added to safe: " + cleanString);
     };
 
-    let removeFromSafelist = function (name) {
+    let removeFromApprovedNewsSourceList = function (name) {
         let removeValue = function (list, value) {
             return list.replace(new RegExp(",?" + value + ",?"), function (match) {
                 var first_comma = match.charAt(0) === ",",
@@ -315,7 +298,7 @@ let removeJunkSites = function () {
 
             nameSpan.on("mousedown", function (e) {
                 let newsName = $(this).find(".nameSpan").text().trim();
-                removeFromSafelist(newsName);
+                removeFromApprovedNewsSourceList(newsName);
                 e.stopPropagation;
             });
 
@@ -344,7 +327,7 @@ let removeJunkSites = function () {
                 // add a keep button to put it in the safe site list
                 let keepBtn = $("<button id='keeperButton'>Add To SafeList</button>");
                 keepBtn.on("click", function (e) {
-                    addToSafelist(name);
+                    addToApprovedNewsSourceList(name);
                 });
                 parent.append(keepBtn);
 
@@ -539,7 +522,7 @@ let removeItems = function () {
             let junk = $("main c-wiz.D9SJMe c-wiz article:contains(" + item + ")");
 
             if (junk.length > 0) {
-                console.log(junk.length + " : " + item + "'s removed");
+                console.log("Remover method working: " + junk.length + " : " + item + "'s removed");
                 junk.remove();
             }
 
@@ -558,7 +541,6 @@ let removeItems = function () {
         let defaultPermNewsJunk = ["2023 USA", "Allianz", "Zelda"];
         defaultTempNewsJunk.sort();
 
-        //console.log(defaultPermNewsJunk.sort());
         let permNewsCookie = getCookie("permNewsJunk");
         if (permNewsCookie) {
             defaultPermNewsJunk = permNewsCookie.split(",").sort();
