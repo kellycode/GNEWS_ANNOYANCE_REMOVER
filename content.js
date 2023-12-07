@@ -406,12 +406,12 @@ let appendManageBox = function () {
 
     // Temp/Perm list tabs
     let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
-    let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Temp</div>');
+    let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Junk News</div>');
     tempTab.click(function () {
         switchFocused(txtArea, "tempNewsJunk");
     });
     textBoxTabs.append(tempTab);
-    let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Perm</div>');
+    let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Planned</div>');
     permTab.click(function () {
         switchFocused(txtArea, "permNewsJunk");
     });
