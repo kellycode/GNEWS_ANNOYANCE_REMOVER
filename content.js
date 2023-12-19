@@ -6,6 +6,15 @@ let permNewsJunk = "";
 let emptyCWizCount = 0;
 
 // USEFUL THINGS
+let setLocalStorage = function (name, csvData) {
+    localStorage.setItem(name, csvData);
+};
+
+let getLocalStorage = function (name) {
+    return localStorage.getItem(name);
+};
+
+
 let setCookie = function (key, value, expiry) {
     var expires = new Date();
     expires.setTime(expires.getTime() + expiry * 24 * 60 * 60 * 1000);
@@ -137,8 +146,6 @@ let commitNewsItems = function () {
     console.log("JUNK NEWS ITEMS: " + cleanString);
     // get which cookie we're saving to
     let cookieName = $(".mbTab.active").attr("data-cookie");
-    // set it
-    setCookie(cookieName, cleanString, 365);
     // set the item in localStorage
     localStorage.setItem(cookieName, cleanString);
     // do a sweep
@@ -355,7 +362,7 @@ let setActiveTextVal = function (textarea, cookieName) {
     let permTab = $("#mbPermTab");
 
     if (cookieName === "tempNewsJunk") {
-        cookieText = getCookie("tempNewsJunk");
+        cookieText = getLocalStorage("tempNewsJunk");
         tempTab.addClass("active");
         permTab.removeClass("active");
     } else {
@@ -410,17 +417,20 @@ let appendManageBox = function () {
     tempTab.click(function () {
         switchFocused(txtArea, "tempNewsJunk");
     });
+
     textBoxTabs.append(tempTab);
     let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Planned</div>');
     permTab.click(function () {
         switchFocused(txtArea, "permNewsJunk");
     });
+
     textBoxTabs.append(permTab);
     newdiv.append(textBoxTabs);
 
     let btnData = {
         id: "mbSubmitBtn",
     };
+
     let mbSubmit = $("<button>", btnData);
     mbSubmit.text("Submit");
     mbSubmit.click(commitNewsItems);
@@ -429,27 +439,32 @@ let appendManageBox = function () {
     let dnBtnData = {
         id: "dnBtn",
     };
+
     let dnBtnDiv = $("<div>", dnBtnData);
     dnBtnDiv.html("&#8650;");
     dnBtnDiv.click(function () {
         window.scrollTo(0, document.body.scrollHeight);
     });
+
     newdiv.append(dnBtnDiv);
 
     let upBtnData = {
         id: "upBtn",
     };
+
     let upBtnDiv = $("<div>", upBtnData);
     upBtnDiv.html("&#8648;");
     upBtnDiv.click(function () {
         window.scrollTo(0, 0);
     });
+
     newdiv.append(upBtnDiv);
 
     let checkBtnData = {
         id: "checkBtn",
         title: "Edit specific news sources to safe list"
     };
+    
     let checkBtnDiv = $("<div>", checkBtnData);
     checkBtnDiv.html("&#9986;");
     checkBtnDiv.click(removeJunkSites);
@@ -463,52 +478,51 @@ let appendManageBox = function () {
 // direct remove
 let removeItems = function () {
     // START GOOGLE NEWS
+
     // Default textbox words
-    /*
-    $2500,(Opinion),49ers,Adjutant,Aegor,Ammon,Amouranth,Arsenal,Ask Amy,Ask Joe,BTC,Barbenheimer,Beast,Barbie,Beyonc,Billy Strings,Boredom B,Capaldi,Champions League,Chase Int,Chauvin,Chelsea,Coldplay,Cormac,Crypto,Cyberpunk,Dai Y,Diagnosing d,Doctor Who,Europa League,FaZe,Flag Officer,Foo Fighters,French Open,Funko,Gay Men,High-risk,Hockey,Hubble,India court,Jalen,James Webb,Klimt,Lakers,Leong,LiFi,Lofi,Man City,Manchester City,Manchester United,Mario Bro,Marvel TV,Midjourney,Mosque call,MrBeast,NBA,NFL,Napoleon,Netball,Nigeria,Pokémon,Premier League,Prince Harry,QAnon,Queen Charlotte,Real Madrid,Roberts-Smith,SBF,Sameera,Shiv,Simpsons,Small Dog W,Spider-Verse,Stanley Cup,Succession,Super Mario,Taylor Swift,The Witcher,Trigun,Twitch,Twitch Star,Twitter,Vtuber,Webb,Webb S,West Ham,What I Eat,Wilhelm,Wimbledon,Wrestling,Wrexham,XFL,YouTube star,YouTuber,donut hole,double-decker,end of history,iPhone,juice jack,luxury picnic,mosque,older father,screen-based,student loan
-    */
     let defaultTempNewsJunk = ["Twitch Star", "Ask Amy", "Prince Harry"];
 
-    let newsRemAside = $("body").children("aside");
-    newsRemAside.remove();
+    // hmmm, idk
+    //let newsRemAside = $("body").children("aside");
+    //newsRemAside.remove();
 
-    let sourcesJunk = $("h2:contains('Sources')");
-    sourcesJunk.css({ color: "red" });
-    sourcesJunk.parent().parent().parent().css({ display: "none" });
-
-    let tempNewsCookie = getCookie("newsJunk");
-    if (tempNewsCookie) {
-        defaultTempNewsJunk = tempNewsCookie.split(",").sort();
-    }
+    //let sourcesJunk = $("h2:contains('Sources')");
+    //sourcesJunk.css({ color: "red" });
+    //sourcesJunk.parent().parent().parent().css({ display: "none" });
 
     if (window.location.hostname === "news.google.com") {
         // COOKIE HANDLERS
-        // get the junk phrase list
-        let newsJunk = getCookie("tempNewsJunk");
+
+        // get the junk items list
+        let newsJunk = getLocalStorage("tempNewsJunk");
+
         // if no cookie
         if (!newsJunk) {
-            console.log("no tempNewsJunk cookie, looking for local storage");
-             // if no cookie, use the localStorage
-            newsJunk = localStorage.getItem('tempNewsJunk');
-            // if no cookie, use the local array
+
+            // if no localSorage data, use the local array
             console.log("no localSorage data, setting string default");
+
             if (!newsJunk) {
+                // just a short default list
                 newsJunk = defaultTempNewsJunk;
             }
+
             // and set it for next time
             let njString = newsJunk.toString();
-            setCookie("tempNewsJunk", njString, 14);
+            setLocalStorage("tempNewsJunk", njString);
 
-            // if we have a cookie
+            // if we have local storage data
         } else {
+
             // string to array for convenience
             defaultTempNewsJunk = newsJunk.split(",").sort();
-            //console.log(defaultTempNewsJunk);
         }
 
         if (window.location.href.indexOf("foryou") !== -1) {
+
             // check for our manager box
             let managerBox = $("#managerBox");
+
             // if not there, make it
             if (managerBox.length === 0) {
                 appendManageBox();
@@ -538,27 +552,12 @@ let removeItems = function () {
         };
 
         // Default never want to see
-        let defaultPermNewsJunk = ["2023 USA", "Allianz", "Zelda"];
         defaultTempNewsJunk.sort();
-
-        let permNewsCookie = getCookie("permNewsJunk");
-        if (permNewsCookie) {
-            defaultPermNewsJunk = permNewsCookie.split(",").sort();
-        }
-
-        // Leave the main page with default blah
-        if (window.location.href.indexOf("foryou") !== -1) {
-            defaultPermNewsJunk.forEach(remover);
-        }
-
         defaultTempNewsJunk.forEach(remover);
     }
-
-    // END GOOGLE NEWS
 };
 
 // START IT UP
-
 markSourceItems();
 removeItems();
 
