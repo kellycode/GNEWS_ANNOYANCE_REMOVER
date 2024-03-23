@@ -1,7 +1,4 @@
-// content.jssetCookie
-
-let tempNewsJunk = "";
-let permNewsJunk = "";
+// content.js
 
 let emptyCWizCount = 0;
 
@@ -12,23 +9,6 @@ let setLocalStorage = function (name, csvData) {
 
 let getLocalStorage = function (name) {
     return localStorage.getItem(name);
-};
-
-
-let setCookie = function (key, value, expiry) {
-    var expires = new Date();
-    expires.setTime(expires.getTime() + expiry * 24 * 60 * 60 * 1000);
-    document.cookie = key + "=" + value + ";expires=" + expires.toUTCString();
-};
-
-let getCookie = function (key) {
-    var keyValue = document.cookie.match("(^|;) ?" + key + "=([^;]*)(;|$)");
-    return keyValue ? keyValue[2] : null;
-};
-
-let eraseCookie = function (key) {
-    var keyValue = getCookie(key);
-    setCookie(key, keyValue, "-1");
 };
 
 let removeExtraChars = function (str) {
@@ -152,230 +132,20 @@ let commitNewsItems = function () {
     removeItems();
 };
 
-let removeJunkSites = function () {
-    // just used as a default, the
-    // values are stored in a cookie
-    let safeSiteList = [
-        "KTVN",
-        "AirForceTimes.com",
-        "Ars Technica",
-        "BBC",
-        "BleepingComputer",
-        "Colorado Newsline",
-        "Colorado Public Radio",
-        "Connaught Telegraph",
-        "Department of Defense",
-        "Ghacks",
-        "Irish Examiner",
-        "Jefferson Public Radio",
-        "Department of Justice",
-        "KELOLAND.com",
-        "Kotaku",
-        "Military Times",
-        "MPR News",
-        "KRNV",
-        "NPR",
-        "Phys.org",
-        "The Record-Courier",
-        "RTE.ie",
-        "Sierra Sun",
-        "Singularity Hub",
-        "Ski Area Management",
-        "Smithsonian Magazine",
-        "South Tahoe Now",
-        "Stars and Stripes",
-        "Tahoe Daily Tribune",
-        "TechRepublic",
-        "UltraRunning Magazine",
-        "Windows Central",
-        "WindowsReport.com",
-    ];
-
-    //console.log("removing garbage");
-
-    // $("main c-wiz.D9SJMe c-wiz:contains(" + item + ")");
-
-    let getApprovedSiteCookie = function () {
-        // COOKIE HANDLERS
-        let approvedNewsCookie = getCookie("newsApproved");
-
-        /*
-        newsApproved defaults
-        KTVN,AirForceTimes.com,Ars Technica,BBC,BleepingComputer,Colorado Newsline,Colorado Public Radio,Connaught Telegraph,Department of Defense,Ghacks,Irish Examiner,Jefferson Public Radio,Department of Justice,KELOLAND.com,Kotaku,Military Times,MPR News,KRNV,NPR,Phys.org,The Record-Courier,RTE.ie,Sierra Sun,Singularity Hub,Ski Area Management,Smithsonian Magazine,South Tahoe Now,Stars and Stripes,Tahoe Daily Tribune,TechRepublic,UltraRunning Magazine,Windows Central,WindowsReport.com,Defense News,TechTalks,Cornell University The Cornell Daily Sun,Nevada Appeal,TechCentral,GOV.UK,CDC,Pipestone County Star,Santa Cruz Sentinel,BBC News,KELOLAND News,Associated Press,Associated Press,KELO,GAA.ie,GAA.ie,Nation.Cymru,Federal Communications Commission,Cork GAA,Sioux County Radio,USGS Earthquake Hazards Program,NVIDIA GeForce,PC Guide - For The Latest PC Hardware & Tech News,Daily Record-News,Sierra Sun Times,UPS,Tech Times,Tech Times
-        */
-
-        // if no cookie
-        if (!approvedNewsCookie) {
-            console.log("no approvedNewsCookie");
-            // if no cookie, use the local array
-            approvedNewsCookie = safeSiteList.toString();
-            // and set it for next time
-            setCookie("newsApproved", approvedNewsCookie, 365);
-            // now that we have a cookie
-        }
-
-        return approvedNewsCookie;
-    };
-
-    let getApprovedSiteCookieAsArray = function () {
-        // COOKIE HANDLERS
-        let approvedNewsCookie = getCookie("newsApproved");
-
-        // if no cookie
-        if (!approvedNewsCookie) {
-            console.log("no approvedNewsCookie");
-            // if no cookie, use the local array
-            approvedNewsCookie = safeSiteList.toString();
-            // and set it for next time
-            setCookie("newsApproved", approvedNewsCookie, 365);
-            // now that we have a cookie
-        }
-
-        return approvedNewsCookie.split(",");
-    };
-
-    let addToApprovedNewsSourceList = function (name) {
-        console.log("Adding " + name + " to safe list");
-
-        // get the approved site list as a cookie string
-        let approvedNewsCookie = getApprovedSiteCookie();
-
-        // now we're sure we have a cookie
-        // add the new site to it
-        approvedNewsCookie += "," + name;
-
-        // tidy up
-        let cleanString = removeExtraChars(approvedNewsCookie);
-
-        // set it
-        setCookie("newsApproved", cleanString, 365);
-
-        console.log("Site added to safe: " + cleanString);
-    };
-
-    let removeFromApprovedNewsSourceList = function (name) {
-        let removeValue = function (list, value) {
-            return list.replace(new RegExp(",?" + value + ",?"), function (match) {
-                var first_comma = match.charAt(0) === ",",
-                    second_comma;
-
-                if (first_comma && (second_comma = match.charAt(match.length - 1) === ",")) {
-                    return ",";
-                }
-                return "";
-            });
-        };
-
-        // get the cookie
-        let approvedNewsCookie = getCookie("newsApproved");
-        // do the remove
-        approvedNewsCookie = removeValue(approvedNewsCookie, name);
-        // set the cookie
-        setCookie("newsApproved", approvedNewsCookie, 365);
-        // notify
-        console.log("Removal: " + name + " removed from safe list");
-    };
-
-    let wizzers = $("main c-wiz.D9SJMe c-wiz");
-
-    console.log("WIZZERS: " + wizzers.length);
-
-    wizzers.each(function (index) {
-        // the first one is the "For you" box
-        if (index === 0) {
-            return;
-        }
-
-        // collect the spans with the site name
-        let spns = $(this).find("div.vr1PYe");
-
-        // TODO add remove approved site button down here
-
-        // loop, get the main article parent,
-        // remove most of the content and keep the name
-        spns.each(function () {
-            let name = $(this).text();
-
-            let target = $(this).closest("article").find("time").parent();
-            target.css({ position: "relative" });
-
-            //let target = $(this).closest(".MCAGUe");
-
-            let nameSpan = $('<span class="nameSpanOut" title="Remove from approved sites">(<span class="nameSpan">' + name + "</span>)</span>");
-
-            nameSpan.on("mousedown", function (e) {
-                let newsName = $(this).find(".nameSpan").text().trim();
-                removeFromApprovedNewsSourceList(newsName);
-                e.stopPropagation;
-            });
-
-            if (!target.hasClass("marked")) {
-                target.append(nameSpan);
-                target.addClass("marked");
-            }
-
-            //.append('<span class="nameSpan">' + name + "</nspan>");
-
-            let safeSiteArray = getApprovedSiteCookieAsArray();
-
-            if (!safeSiteArray.includes(name)) {
-                console.log("Found junk site " + name);
-                let parent = $(this).closest("article");
-                parent.find("div.XlKvRb").remove();
-                parent.find("div.oovtQ").remove();
-                parent.find("h4.JtKRv").remove();
-                parent.find("figure.JtKRv").remove();
-                parent.find("figure.K0q4G").remove();
-                parent.find("div.UOVeFe").remove();
-
-                // add back the dropdown menu
-                parent.append($(this).html());
-
-                // add a keep button to put it in the safe site list
-                let keepBtn = $("<button id='keeperButton'>Add To SafeList</button>");
-                keepBtn.on("click", function (e) {
-                    addToApprovedNewsSourceList(name);
-                });
-                parent.append(keepBtn);
-
-                // make it minimal
-                parent.css({
-                    backgroundColor: "black",
-                    color: "#666",
-                    padding: "10px",
-                    borderRadius: "6px",
-                    position: "relative",
-                });
-            }
-        });
-    });
-};
-
-let switchFocused = function (textarea, cookieName) {
-    setActiveTextVal(textarea, cookieName);
-};
-
-let setActiveTextVal = function (textarea, cookieName) {
-    let cookieText = "";
+let setActiveTextValues = function (textarea, dataName) {
+    let newsDataText = "";
 
     let tempTab = $("#mbTempTab");
-    let permTab = $("#mbPermTab");
 
-    if (cookieName === "tempNewsJunk") {
-        cookieText = getLocalStorage("tempNewsJunk");
-        tempTab.addClass("active");
-        permTab.removeClass("active");
-    } else {
-        cookieText = getCookie("permNewsJunk");
-        tempTab.removeClass("active");
-        permTab.addClass("active");
-    }
+    newsDataText = getLocalStorage("tempNewsJunk");
+    tempTab.addClass("active");
 
-    if (cookieText) {
-        let sortedCookieText = cookieText.split(",").sort().join(",\n");
-        textarea.val(sortedCookieText);
+    if (newsDataText) {
+        let sortedNewsDataText = newsDataText.split(",").sort().join(",\n");
+        console.log("Junk news count: " + sortedNewsDataText.length)
+        textarea.val(sortedNewsDataText);
     } else {
-        console.log("No response for " + cookieName);
+        console.log("No response for " + dataName);
     }
 };
 
@@ -408,23 +178,14 @@ let appendManageBox = function () {
     txtArea.on("mousedown", function (e) {
         e.stopPropagation;
     });
-    setActiveTextVal(txtArea, "tempNewsJunk");
+    setActiveTextValues(txtArea, "tempNewsJunk");
     newdiv.append(txtArea);
 
     // Temp/Perm list tabs
     let textBoxTabs = $('<div id="mbTextBoxTabs"></div>');
-    let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Junk News</div>');
-    tempTab.click(function () {
-        switchFocused(txtArea, "tempNewsJunk");
-    });
+    let tempTab = $('<div id="mbTempTab" class="mbTab active" data-cookie="tempNewsJunk">Junk News Items</div>');
 
     textBoxTabs.append(tempTab);
-    let permTab = $('<div id="mbPermTab" class="mbTab" data-cookie="permNewsJunk">Planned</div>');
-    permTab.click(function () {
-        switchFocused(txtArea, "permNewsJunk");
-    });
-
-    textBoxTabs.append(permTab);
     newdiv.append(textBoxTabs);
 
     let btnData = {
@@ -433,6 +194,7 @@ let appendManageBox = function () {
 
     let mbSubmit = $("<button>", btnData);
     mbSubmit.text("Submit");
+    mbSubmit.attr("title", "Submit")
     mbSubmit.click(commitNewsItems);
     newdiv.append(mbSubmit);
 
@@ -442,6 +204,7 @@ let appendManageBox = function () {
 
     let dnBtnDiv = $("<div>", dnBtnData);
     dnBtnDiv.html("&#8650;");
+    dnBtnDiv.attr("title", "Scroll To Bottom");
     dnBtnDiv.click(function () {
         window.scrollTo(0, document.body.scrollHeight);
     });
@@ -454,21 +217,12 @@ let appendManageBox = function () {
 
     let upBtnDiv = $("<div>", upBtnData);
     upBtnDiv.html("&#8648;");
+    upBtnDiv.attr("title", "Scroll To Top");
     upBtnDiv.click(function () {
         window.scrollTo(0, 0);
     });
 
     newdiv.append(upBtnDiv);
-
-    let checkBtnData = {
-        id: "checkBtn",
-        title: "Edit specific news sources to safe list"
-    };
-    
-    let checkBtnDiv = $("<div>", checkBtnData);
-    checkBtnDiv.html("&#9986;");
-    checkBtnDiv.click(removeJunkSites);
-    newdiv.append(checkBtnDiv);
 
     $("body").append(newdiv);
 
@@ -479,16 +233,8 @@ let appendManageBox = function () {
 let removeItems = function () {
     // START GOOGLE NEWS
 
-    // Default textbox words
+    // Default textbox words only used if no loacl storage data
     let defaultTempNewsJunk = ["Twitch Star", "Ask Amy", "Prince Harry"];
-
-    // hmmm, idk
-    //let newsRemAside = $("body").children("aside");
-    //newsRemAside.remove();
-
-    //let sourcesJunk = $("h2:contains('Sources')");
-    //sourcesJunk.css({ color: "red" });
-    //sourcesJunk.parent().parent().parent().css({ display: "none" });
 
     if (window.location.hostname === "news.google.com") {
         // COOKIE HANDLERS
@@ -536,6 +282,7 @@ let removeItems = function () {
             let junk = $("main c-wiz.D9SJMe c-wiz article:contains(" + item + ")");
 
             if (junk.length > 0) {
+                // ADD TO WATCH REMOVAL INFO
                 console.log("Remover method working: " + junk.length + " : " + item + "'s removed");
                 junk.remove();
             }
@@ -544,7 +291,7 @@ let removeItems = function () {
             $( "main c-wiz.D9SJMe c-wiz" ).each(function( index ) {
                 let articles = $(this).find('article');
                 if(articles.length === 0) {
-                    console.log("removing empty c-wiz block " + emptyCWizCount++);
+                    //console.log("removing empty c-wiz block " + emptyCWizCount++);
                     $(this).remove();
                 }
               });
@@ -561,16 +308,39 @@ let removeItems = function () {
 markSourceItems();
 removeItems();
 
+// PAGE CHECK TIMER
+// auto check every five seconds
 let intTime = 5000;
-
-// whatever
+// interval timer
 setInterval(function () {
     markSourceItems();
     removeItems();
 }, intTime);
 
-let timer = null;
 
+// SCROLL LOAD TIMER
+// as we reach the bottom, gnews loads more and that makes annoying page jumps
+// it reaches some kind of max articles and stops loading more so here we want
+// to do that all at once on page load
+
+let currentScrollHeight = 0;
+// Timing depends on page load and two seconds isn't always enough
+let scrollIntTime = 2000;
+// interval timer
+let scrollerInterval = setInterval(function () {
+    if(document.body.scrollHeight > currentScrollHeight) {
+        console.log("Interval Scrolling")
+        currentScrollHeight = document.body.scrollHeight;
+        window.scrollTo(0, document.body.scrollHeight);
+    } else if (document.body.scrollHeight <= currentScrollHeight) {
+        console.log("Done refreshing and scrolling to top");
+        window.scrollTo(0, 0);
+        clearInterval(scrollerInterval);
+    }
+}, scrollIntTime);
+
+
+let timer = null;
 // and then call markSourceItems when page is scrolled
 window.addEventListener(
     "scroll",
